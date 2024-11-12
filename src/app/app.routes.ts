@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
 
-import { DashboardComponent } from '../pages/dashboard/dashboard.component';
-import { NotFoundComponent } from '../pages/not-found/not-found.component';
 import { LoginComponent } from '../pages/login/login.component';
 import { MainLayoutComponent } from '../components/main-layout/main-layout.component';
 
+//lazy load almost routes by default, preload which frequently accessed
 export const routes: Routes = [
   {
     path: '',
@@ -12,13 +11,14 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        component: DashboardComponent,
+        loadComponent: () => import('../pages/dashboard/dashboard.component').then(c => c.DashboardComponent),
+        data: { preload: true },
       },
       {
         path: '',
         redirectTo: '/dashboard',
         pathMatch: 'full',
-      }
+      },
     ],
   },
   {
@@ -27,6 +27,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    component: NotFoundComponent,
+    loadComponent: () => import('../pages/not-found/not-found.component').then(c => c.NotFoundComponent),
   },
 ];

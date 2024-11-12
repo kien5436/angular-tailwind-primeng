@@ -1,7 +1,24 @@
 import { Injectable } from "@angular/core";
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { environment } from '../environments/environment';
+
+export class HttpRequestError extends Error {
+
+  constructor(message = 'Network error', options?: ErrorOptions) {
+    super(message, options);
+  }
+}
+
+export class HttpResponseError extends Error {
+
+  response: AxiosResponse;
+
+  constructor(response: AxiosResponse, message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.response = response;
+  }
+}
 
 @Injectable({ providedIn: 'root' })
 export class HttpService {
@@ -17,23 +34,59 @@ export class HttpService {
     });
   }
 
-  public get<T>(url: string, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.get(url, options)
+  public async request<T>(url: string, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    try {
+      return await this.axiosInstance.request({
+        ...options,
+        url,
+      });
+    }
+    catch (err) {
+      if (err instanceof AxiosError) {
+        if (err.response) {
+          throw new HttpResponseError(err.response);
+        }
+        else if (err.request) {
+          throw new HttpRequestError();
+        }
+      }
+      throw err;
+    }
+
   }
 
-  public post<T>(url: string, data?: unknown, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.post(url, data, options);
+  public async get<T>(url: string, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    return await this.request<T>(url, options);
   }
 
-  public put<T>(url: string, data?: unknown, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.put(url, data, options);
+  public async post<T>(url: string, data?: unknown, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    return await this.request<T>(url, {
+      ...options,
+      method: 'POST',
+      data,
+    });
   }
 
-  public patch<T>(url: string, data?: unknown, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.patch(url, data, options);
+  public async put<T>(url: string, data?: unknown, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    return await this.request<T>(url, {
+      ...options,
+      method: 'PUT',
+      data,
+    });
   }
 
-  public delete<T>(url: string, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.delete(url, options);
+  public async patch<T>(url: string, data?: unknown, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    return await this.request<T>(url, {
+      ...options,
+      method: 'PATCH',
+      data,
+    });
+  }
+
+  public async delete<T>(url: string, options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    return await this.request<T>(url, {
+      ...options,
+      method: 'DELETE',
+    });
   }
 }
