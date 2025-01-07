@@ -11,7 +11,7 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadComponent: () => import('../pages/dashboard/dashboard.component').then(c => c.DashboardComponent),
+        loadComponent: () => import('../pages/dashboard/dashboard.component').then((c) => c.DashboardComponent),
         data: { preload: true },
       },
       {
@@ -27,6 +27,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    loadComponent: () => import('../pages/not-found/not-found.component').then(c => c.NotFoundComponent),
+    loadComponent: () => import('../pages/not-found/not-found.component').then((c) => c.NotFoundComponent),
   },
 ];

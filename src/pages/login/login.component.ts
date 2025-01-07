@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'k-login',
   standalone: true,
   imports: [],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
 })
 export class LoginComponent {
 

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { environment } from '../environments/environment';
@@ -28,9 +28,7 @@ export class HttpService {
     this.axiosInstance = axios.create({
       baseURL: environment.apiUrl,
       timeout: 5000,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
@@ -42,14 +40,13 @@ export class HttpService {
       });
     }
     catch (err) {
-      if (err instanceof AxiosError) {
-        if (err.response) {
+      if (err instanceof AxiosError)
+        if (err.response)
           throw new HttpResponseError(err.response);
-        }
-        else if (err.request) {
+
+        else if (err.request)
           throw new HttpRequestError();
-        }
-      }
+
       throw err;
     }
 
